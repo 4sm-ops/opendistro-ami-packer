@@ -1,0 +1,47 @@
+{
+  "variables": {
+    "aws_access_key": null,
+    "aws_secret_key": null,
+    "aws_region": null
+  },
+  "builders": [{
+    "type": "amazon-ebs",
+    "access_key": "{{user `aws_access_key`}}",
+    "secret_key": "{{user `aws_secret_key`}}",
+    "region": "{{user `aws_region`}}",
+    "source_ami_filter": {
+      "filters": {
+      "virtualization-type": "hvm",
+      "name": "ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*",
+      "root-device-type": "ebs"
+      },
+      "owners": ["099720109477"],
+      "most_recent": true
+    },
+    "instance_type": "t2.large",
+    "ssh_username": "ubuntu",
+    "ami_name": "simple-opendistrobuild-{{timestamp}}"
+  }],
+  "provisioners": [{
+    "type": "shell",
+    "inline": [
+	  "sleep 15",
+	  "sudo add-apt-repository ppa:openjdk-r/ppa",
+      "sudo apt-get update",
+	  "sudo apt install -y openjdk-11-jdk",
+	  "sudo apt install -y unzip",
+	  "wget -qO - https://d3g5vo6xdbdb9a.cloudfront.net/GPG-KEY-opendistroforelasticsearch | sudo apt-key add -",
+	  "echo \"deb https://d3g5vo6xdbdb9a.cloudfront.net/apt stable main\" | sudo tee -a   /etc/apt/sources.list.d/opendistroforelasticsearch.list",
+	  "wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-7.7.0-amd64.deb",
+	  "sudo dpkg --force-depends -i elasticsearch-oss-7.7.0-amd64.deb",
+	  "rm -rf elasticsearch-oss-7.7.0-amd64.deb",
+	  "sudo apt-get update",
+	  "sudo apt install -y opendistroforelasticsearch",
+	  "sudo /bin/systemctl daemon-reload",
+	  "sudo /bin/systemctl enable elasticsearch.service",
+	  "sudo apt install -y opendistroforelasticsearch-kibana",
+	  "sudo /bin/systemctl daemon-reload",
+	  "sudo /bin/systemctl enable kibana.service"
+    ]
+  }]
+}
