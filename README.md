@@ -10,6 +10,8 @@ https://opendistro.github.io/for-elasticsearch-docs/docs/kibana/
 ToDo:
 1. Change default password:
 
+*You have now changed the passwords for the **admin and kibanaserver** users. There are four more users preconfigured in Open Distro for Elasticsearch’s security plugin: **kibanaro, logstash, readall, and snapshotrestore**. You can use the Security plugin’s UI to change these passwords.*
+
 **Tools location:**
 cd /usr/share/elasticsearch/plugins/opendistro_security/tools
 
